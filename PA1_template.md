@@ -43,17 +43,12 @@ dt_noNA = drop_na(dt)
 1. Calculate the total number of steps taken per day
 
 ```r
-sum(dt_noNA$steps)
-```
-
-```
-## [1] 570608
+steps_per_day = summarise(group_by(dt_noNA, date), steps=sum(steps))
 ```
 
 2. Make a histogram of the total number of steps taken each day
 
 ```r
-steps_per_day = summarise(group_by(dt_noNA, date), steps=sum(steps))
 ggplot(data = steps_per_day) + geom_histogram(mapping = aes(steps)) +
     labs(title = "Histogram of total number of steps each day")
 ```
@@ -126,6 +121,34 @@ imputed$steps = unsplit(tapply(dt$steps, dt$interval,
     function(x) {x[is.na(x)] = mean(x[!is.na(x)]); return(x)}), dt$interval)
 ```
 
+4. Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```r
+imputed_per_day = summarise(group_by(imputed, date), steps=sum(steps))
+ggplot(data = imputed_per_day) + geom_histogram(mapping = aes(steps)) +
+    labs(title = "Histogram of total number of steps each day")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+```r
+mean(imputed_per_day$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+median(imputed_per_day$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+**The mean number of steps per day is the same as the mean with NAs excluded from the first part of the assignment. The median number of steps per day is very close to the median from the first part and is now the same as the mean. The histogram appears roughly the same as the first part, but with higher counts because days which were previously excluded from the data are now included.**
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -151,4 +174,4 @@ p2 = ggplot(data = weekend_steps) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
